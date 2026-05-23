@@ -157,13 +157,21 @@ exploitable because the attacker can:
 2. Sign a forged JWT with HS256 using the PUBLIC key as the HMAC secret
 3. Server verifies with the same public key → signature matches → admin access!
 
-### 3. Claim Forging
+### 3. Authorization Boundary Fuzzing
 
-Once you have a bypass (alg:none or confusion), you can set any claim:
-- `role=admin`
-- `sub=admin`
-- `exp=9999999999` (far future expiry)
-- Custom application claims
+Fuzzing involves rapidly sending mutated JWT claims (like `role`, `scope`, or `permissions`) to brute-force the backend's authorization rules. Because we can bypass the cryptographic signature (via `alg:none` or Algorithm Confusion), we can systematically map out exactly which claims are required to access restricted endpoints.
+
+### 4. Tenant Isolation Abuse
+
+In cloud-native microservices, databases often rely on the `tenant` claim within the JWT to enforce Row Level Security (RLS) or data isolation (e.g., `tenant: companyA`). If the signature validation is bypassed, an attacker can simply alter their token to read `tenant: companyB`. The microservice will dutifully fetch the other company's data, resulting in a Horizontal Privilege Escalation and data breach.
+
+### 5. Audience Confusion
+
+The `aud` (Audience) claim specifies the intended recipient of a token. An attacker might legitimately acquire a token for a low-privilege service (like a frontend API). If a high-privilege internal microservice fails to validate that the `aud` claim matches its own identifier, the attacker can submit the low-privilege token to the high-privilege service to bypass authorization.
+
+### 6. Token Replay
+
+Stateless JWTs do not require a database lookup, making them fast but vulnerable to being captured and reused (replayed). Secure systems must track the `jti` (JWT ID) in a high-speed cache (like Redis) or enforce very strict `exp` (Expiration) times. If these protections are missing, an attacker can continually reuse a stolen token indefinitely.
 
 ---
 
