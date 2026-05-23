@@ -187,7 +187,11 @@ jwt.decode(
 )
 ```
 
-See [docs/hardening.md](docs/hardening.md) for the complete secure implementation.
+### Step-by-Step Demo
+
+Refer to [docs/attack_chain.md](docs/attack_chain.md) and [docs/demo-flow.md](docs/demo-flow.md) for the complete sequence of commands using the new `attack.py` master CLI tool.
+
+🔥 **[View the Live Terminal Attack Outputs Here](docs/attack_outputs.md)**
 
 ---
 
