@@ -40,7 +40,7 @@ def vulnerable_decode_jwt(token: str, public_key_pem: bytes) -> dict | None:
             signing_input = f"{parts[0]}.{parts[1]}".encode("utf-8")
 
             def _b64d(s):
-                s += "=" * (4 - len(s) % 4)
+                s += "=" * ((4 - len(s) % 4) % 4)
                 return base64.urlsafe_b64decode(s)
 
             expected_sig = hmac.new(

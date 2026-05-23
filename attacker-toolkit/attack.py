@@ -31,7 +31,7 @@ Available Commands:
 
 Examples:
   python attack.py inspect <TOKEN>
-  python attack.py none <TOKEN> --target http://localhost:5000/admin/vulnerable
+  python attack.py none <TOKEN> --target http://localhost:5001/admin/vulnerable
         """
     )
     
@@ -95,7 +95,7 @@ Examples:
             
         elif args.command == "confusion":
             import alg_confusion
-            alg_confusion.run(args.target, args.endpoint, args.set)
+            alg_confusion.run_attack(args.target, args.endpoint, args.set)
             
         elif args.command == "fuzz":
             import auth_fuzzer

