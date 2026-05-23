@@ -21,6 +21,20 @@ Capturing the flags from the vulnerable microservices demonstrates complete syst
 
 ---
 
+## Implemented Attack Functions & Modules
+
+Our offensive toolkit (`attacker-toolkit/attack.py`) is fully automated and implements the following distinct red-team functions:
+
+1. **`inspect` (Claim Enumeration):** Decodes JWT headers and payloads locally to inspect claims without needing the secret key.
+2. **`none` (CVE-2015-9235 Exploit):** Automatically strips the JWT signature, alters the `alg` header to `none`, injects arbitrary payload claims, and bypasses authentication.
+3. **`confusion` (CVE-2016-5431 Exploit):** Automates the RS256→HS256 downgrade. It fetches the server's public key, encodes it in Base64URL, signs a forged payload symmetrically, and achieves vertical privilege escalation.
+4. **`fuzz` (Authorization Boundary Fuzzing):** Rapidly mutates JWT claims (`role`, `scope`, `tier`, `permissions`) to brute-force and map out the backend authorization logic.
+5. **`tenants` (Horizontal Privilege Escalation):** Automatically modifies the `tenant` claim in an authenticated JWT to breach database boundaries and steal cross-tenant data.
+6. **`audience` (Service-to-Service Abuse):** Modifies the `aud` (Audience) claim to test if the microservice strictly validates token destinations.
+7. **`replay` (State/Time Attacks):** Tests if the server tracks `jti` (JWT ID) claims or enforces strict `exp` (Expiration) checks to prevent token replay attacks.
+
+---
+
 ## Team Structure
 | Person | Role | Files |
 |---|---|---|
