@@ -1,0 +1,59 @@
+# =============================================================================
+# docker-compose.yml — JWT Auth Bypass Toolkit
+# =============================================================================
+# Brings up the vulnerable API and an optional attacker container.
+#
+# Usage:
+#   docker compose up --build          # Start everything
+#   docker compose up api              # API only
+#   docker compose exec attacker bash  # Drop into attacker shell
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ── Vulnerable Flask API ──────────────────────────────────────────────────
+  api:
+    build:
+      context: ./vulnerable-api
+      dockerfile: Dockerfile
+    container_name: jwt-lab-api
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      # Mount keys directory so generated keys persist
+      - ./vulnerable-api/keys:/app/keys
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - jwt-lab-net
+
+  # ── Attacker Container (optional — run attacks from here) ─────────────────
+  attacker:
+    image: python:3.11-slim
+    container_name: jwt-lab-attacker
+    working_dir: /toolkit
+    volumes:
+      - ./attacker-toolkit:/toolkit
+    command: >
+      bash -c "pip install -q -r requirements.txt &&
+               echo '=== Attacker toolkit ready ===' &&
+               echo 'Run: python none_attack.py --target http://api:5000' &&
+               tail -f /dev/null"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - jwt-lab-net
+
+networks:
+  jwt-lab-net:
+    driver: bridge
