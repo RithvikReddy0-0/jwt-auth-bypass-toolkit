@@ -140,6 +140,7 @@ jwt-auth-bypass-toolkit/
 ├── docs/
 │   ├── setup_guide.md      Setup documentation (Docker/Local)
 │   ├── threat_model.md     STRIDE Threat Model for Hackathon rubric
+│   ├── code_comments.md    Detailed explanations of intentional vulnerabilities
 │   ├── demo-flow.md        Step-by-step presentation guide
 │   ├── architecture.md     System diagrams
 │   └── hardening.md        Security fixes + secure code examples
