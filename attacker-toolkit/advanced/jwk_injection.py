@@ -1,0 +1,5 @@
+print("Advanced Module: JWK Injection")
+print("This module simulates injecting an entire public key into the 'jwk' header.")
+print("If the server blindly trusts the 'jwk' header, the attacker signs the token with their own private key,")
+print("and provides the corresponding public key in the header for the server to verify it with.")
+print("Status: Demo placeholder.")

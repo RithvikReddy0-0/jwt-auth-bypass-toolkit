@@ -1,0 +1,5 @@
+print("Advanced Module: kid Traversal (Directory Traversal via Key ID)")
+print("This module simulates injecting path traversal payloads into the 'kid' header.")
+print("Example: {'kid': '../../../../../../dev/null'}")
+print("If the server uses 'kid' to load a file without sanitization, it may use an empty file as the HMAC secret.")
+print("Status: Demo placeholder.")

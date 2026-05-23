@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
     container_name: jwt-lab-api
     ports:
-      - "5000:5000"
+      - "5001:5001"
     environment:
       - FLASK_ENV=development
       - FLASK_DEBUG=1
@@ -28,7 +28,7 @@ services:
       # Mount keys directory so generated keys persist
       - ./vulnerable-api/keys:/app/keys
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5001/')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -46,7 +46,7 @@ services:
     command: >
       bash -c "pip install -q -r requirements.txt &&
                echo '=== Attacker toolkit ready ===' &&
-               echo 'Run: python none_attack.py --target http://api:5000' &&
+               echo 'Run: python attack.py --help' &&
                tail -f /dev/null"
     depends_on:
       api:
