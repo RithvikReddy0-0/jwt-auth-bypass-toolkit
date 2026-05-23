@@ -1,21 +1,9 @@
 # JWT Authentication Bypass & Algorithm Confusion Toolkit
 ### Hackathon Project — MITRE ATT&CK T1550.001
 
-> ⚠️ **Educational / CTF Use Only** — Do not deploy the vulnerable API in any production or internet-accessible environment.
 
 ---
 
-## Hackathon Judging Criteria Guide
-
-This repository has been structured to meet the maximum rubric scoring:
-- **Code Quality & Engineering**: See `vulnerable-api/validators/vulnerable_validator.py` for heavily commented, intentional flaws vs secure implementations.
-- **Attack/Defense Validity**: Fully functional [Automated Offensive Toolkit](attacker-toolkit/attack.py) targeting a multi-container microservice API.
-- **Documentation (2 Marks)**: 
-  - **Setup**: Detailed instructions in [docs/setup_guide.md](docs/setup_guide.md).
-  - **Threat Model**: Complete analysis in [docs/threat_model.md](docs/threat_model.md).
-  - **Code Comments**: Every vulnerability and defensive mechanism is annotated in the source code.
-
----
 
 ## What This Is
 
@@ -34,20 +22,18 @@ Capturing the flags from the vulnerable microservices demonstrates complete syst
 ---
 
 ## Team Structure
-
 | Person | Role | Files |
 |---|---|---|
-| **Person 1** | Vulnerable Cloud-Native API | `vulnerable-api/app.py`, `validators/` |
-| **Person 2** | Offensive Attack Toolkit | `attacker-toolkit/attack.py`, `attacker-toolkit/*.py` |
-| **Person 3** | Demo Flow, Hardening, Docs | `docs/*.md`, `README.md` |
+| **Mukkara Rithvik Reddy** | Vulnerable Cloud-Native API | `vulnerable-api/app.py`, `vulnerable-api/generate_keys.py`, `vulnerable-api/Dockerfile`, `validators/` |
+| **Ravva Siddhartha** | Offensive Attack Toolkit | `attacker-toolkit/attack.py`, `attacker-toolkit/*.py` |
+| **Aman Agarwal** | Demo Flow, Testing, Hardening | `docs/demo-flow.md`, `docs/hardening.md`, `tests/`, `demo screenshots` |
+| **Kopperla Bharath Reddy** | Documentation, README, PPT, Final Report | `README.md`, `docs/architecture.md`, `docs/hardening.md`, `docs/demo-flow.md`, `presentation.pptx`, `final_report.docx` |
 
 ---
 
 ## Quick Start
 
 We have provided a detailed, step-by-step setup guide for both Docker and Local Python environments.
-
-👉 **[Read the Setup Documentation Here](docs/setup_guide.md)**
 
 ---
 
@@ -84,11 +70,7 @@ curl -X POST http://localhost:5001/login \
 
 ## Attack Commands
 
-### Step-by-Step Demo
 
-Refer to [docs/attack_chain.md](docs/attack_chain.md) and [docs/demo-flow.md](docs/demo-flow.md) for the complete sequence of commands using the new `attack.py` master CLI tool.
-
----
 
 ## Project Structure
 
@@ -97,8 +79,8 @@ jwt-auth-bypass-toolkit/
 ├── vulnerable-api/
 │   ├── app.py              Flask API (Microservice Blueprint architecture)
 │   ├── generate_keys.py    RSA key pair generator
-│   ├── requirements.txt
-│   ├── Dockerfile
+│   ├── requirements.txt    Python dependencies
+│   ├── Dockerfile          Container setup for vulnerable API
 │   ├── validators/         Vulnerable vs Secure JWT implementations
 │   └── keys/
 │       ├── private.pem     RS256 signing key
@@ -106,6 +88,7 @@ jwt-auth-bypass-toolkit/
 │
 ├── attacker-toolkit/
 │   ├── attack.py           Master CLI tool
+│   ├── claim_enum.py       Attack: Inspect and enumerate claims
 │   ├── none_attack.py      Attack: alg:none bypass
 │   ├── alg_confusion.py    Attack: RS256→HS256 confusion
 │   ├── auth_fuzzer.py      Attack: Fuzz authorization boundaries
@@ -113,23 +96,21 @@ jwt-auth-bypass-toolkit/
 │   ├── audience_confusion.py Attack: Target downstream services
 │   ├── replay.py           Attack: Token replay tests
 │   ├── forge_claims.py     Manual JWT forging
-│   ├── utils.py            Shared helpers
-│   ├── advanced/           Edge case and future attacks
-│   └── requirements.txt
+│   ├── utils.py            Shared CLI formatting helpers
+│   ├── advanced/           Edge case payloads
+│   └── requirements.txt    Python dependencies
 │
 ├── docs/
-│   ├── attack_chain.md     Red team demo walkthrough
-│   ├── mitre_mapping.md    MITRE ATT&CK framework mapping
-│   ├── cloud_native_failures.md Why JWTs fail in distributed architectures
-│   ├── hardening.md        Security fixes + secure code examples
-│   ├── demo-flow.md        Step-by-step Postman guide
+│   ├── setup_guide.md      Setup documentation (Docker/Local)
+│   ├── threat_model.md     STRIDE Threat Model for Hackathon rubric
+│   ├── demo-flow.md        Step-by-step presentation guide
 │   ├── architecture.md     System diagrams
-│   └── future_scope.md     Advanced attacks (JKU, JWK, KID)
+│   └── hardening.md        Security fixes + secure code examples
 │
 ├── tests/
 │   └── edge_cases/         Test generation tools
 │
-├── docker-compose.yml
+├── docker-compose.yml      Automated environment builder
 └── README.md               This file
 ```
 
