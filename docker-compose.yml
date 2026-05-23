@@ -9,8 +9,6 @@
 #   docker compose exec attacker bash  # Drop into attacker shell
 # =============================================================================
 
-version: "3.9"
-
 services:
 
   # ── Vulnerable Flask API ──────────────────────────────────────────────────
