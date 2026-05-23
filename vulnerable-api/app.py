@@ -194,12 +194,22 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 @require_jwt_vulnerable
 @require_claim("role", "admin")
 def admin_vuln():
+    """
+    [VULNERABLE ENDPOINT]
+    This route relies on `require_jwt_vulnerable` which allows alg:none and RS256->HS256 confusion.
+    If the crypto bypass is successful, the attacker can forge the role=admin claim.
+    """
     return jsonify({"message": "🔓 ADMIN ACCESS GRANTED", "flag": "FLAG{jwt_bypass_success_admin}"})
 
 @admin_bp.route("/secure", methods=["GET"])
 @require_jwt_secure("admin-service")
 @require_claim("role", "admin")
 def admin_secure():
+    """
+    [SECURE ENDPOINT]
+    This route uses `require_jwt_secure` which implements Strict Algorithm Pinning.
+    It is immune to the bypass attacks.
+    """
     return jsonify({"message": "🔒 SECURE ADMIN ACCESS GRANTED", "flag": "FLAG{secure_admin_accessed}"})
 
 
@@ -210,6 +220,10 @@ billing_bp = Blueprint("billing", __name__, url_prefix="/billing")
 @require_jwt_vulnerable
 @require_claim("scope", "billing:read")
 def billing_vuln():
+    """
+    [VULNERABLE ENDPOINT]
+    Used to demonstrate horizontal privilege escalation via Scope forging.
+    """
     return jsonify({"message": "Billing data accessed", "tenant": request.jwt_payload.get("tenant")})
 
 
@@ -219,6 +233,11 @@ tenant_bp = Blueprint("tenant", __name__, url_prefix="/tenant-data")
 @tenant_bp.route("/vulnerable/<tenant_id>", methods=["GET"])
 @require_jwt_vulnerable
 def tenant_vuln(tenant_id):
+    """
+    [VULNERABLE ENDPOINT]
+    Used to demonstrate Tenant Isolation Abuse. By forging the 'tenant' claim, 
+    an attacker can breach data belonging to other companies.
+    """
     token_tenant = request.jwt_payload.get("tenant")
     if token_tenant != tenant_id and token_tenant != "system":
         return jsonify({"error": "Cross-tenant access denied"}), 403

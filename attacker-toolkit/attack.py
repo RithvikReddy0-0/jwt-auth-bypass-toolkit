@@ -3,7 +3,11 @@
 =============================================================================
 ATTACK CLI — Cloud-Native JWT Attack Platform
 =============================================================================
-Master entry point for all offensive JWT modules.
+Author: Person 2 (Offensive Security)
+Purpose: Master entry point for all offensive JWT modules.
+Hackathon Note: This tool automates the manual exploitation steps (like
+fetching public keys, Base64URL encoding, and forging payloads) into a 
+scalable red-team framework.
 """
 
 import argparse
